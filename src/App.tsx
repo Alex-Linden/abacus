@@ -8,17 +8,19 @@ function App() {
   const [count, setCount] = useState("123")
 
   function convertOperation(operation: string): string {
-    let nums = []
+    try {
+      // Use `Function` to safely evaluate the input.
+      const result = new Function(`return ${input}`)();
 
-    let tmp = ""
-    for (let i = 0; i < operation.length; i++) {
-      if (!isNsN(operation[i]) || operation[i] === ".") {
-        tmp += operation[i]
-      }else{
-        nums.push(parseInt(tmp))
-        tmp = ""
-
+      // Ensure the result is a finite number
+      if (typeof result !== "number" || !isFinite(result)) {
+        throw new Error("Calculation resulted in an invalid number");
       }
+
+      return result.toString();
+    } catch (error) {
+      return `Error: ${(error as Error).message}`;
+    }
   }
 
   return (
