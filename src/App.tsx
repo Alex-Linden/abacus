@@ -2,10 +2,12 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import { Display } from './Display'
+import { Button } from './Button'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState("123")
+  const [formula, setFormula] = useState('1+1')
+  const [error, setError] = useState('')
 
   function convertOperation(operation: string): string {
     try {
@@ -17,16 +19,30 @@ function App() {
         throw new Error("Calculation resulted in an invalid number");
       }
 
-      return result.toString();
+      setFormula(result.toString())
     } catch (error) {
-      return `Error: ${(error as Error).message}`;
+      setError(`Error: ${(error as Error).message}`);
     }
   }
+
+  const handleClick = (value : string) => {
+    let newValue = formula + value
+    setFormula(newValue)
+
+  }
+
+  const numberButton = Array.from(Array(9)).map((_, index) => {
+    const number = index + 1
+    return (
+      <Button text={number.toString()} buttonFunc={handleClick} />
+    )
+  })
 
   return (
     <>
       <div className="app">
-        <Display operation={count} />
+        <Display operation={formula} />
+        {numberButton}
       </div>
     </>
   )
