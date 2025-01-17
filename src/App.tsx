@@ -1,15 +1,16 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import { Display } from './Display'
-import { Button } from './Button'
-import './App.css'
+import { useState } from 'react';
+import reactLogo from './assets/react.svg';
+import viteLogo from '/vite.svg';
+import { Display } from './Display';
+import { Button } from './Button';
+import './App.css';
 
-const operations = ['+', '-', '*', '/']
+const operations = ['+', '-', '*', '/'];
 
 function App() {
-  const [formula, setFormula] = useState('1+1')
-  const [error, setError] = useState('')
+  const [formula, setFormula] = useState('1+1');
+  const [error, setError] = useState('');
+  const [numberValid, setNumberValid] = useState(true);
 
   function convertOperation(operation: string): void {
     try {
@@ -21,35 +22,42 @@ function App() {
         throw new Error("Calculation resulted in an invalid number");
       }
 
-      setFormula(result.toString())
+      setFormula(result.toString());
+      setNumberValid(false);
     } catch (error) {
       setError(`Error: ${(error as Error).message}`);
     }
   }
 
   function clearFormula(): void {
-    setFormula('')
-    setError('')
+    setFormula('');
+    setNumberValid(true);
+    setError('');
   }
 
-  const addToOperation = (value : string) => {
-    const newValue = formula + value
-    setFormula(newValue)
-
-  }
+  const addToOperation = (value: string) => {
+    if (numberValid || operations.includes(value)) {
+      const newValue = formula + value;
+      setFormula(newValue);
+      setNumberValid(true);
+    } else {
+      clearFormula();
+      setFormula(value);
+    }
+  };
 
   const numberButton = Array.from(Array(9)).map((_, index) => {
-    const number = index + 1
+    const number = index + 1;
     return (
       <Button key={`numbtn-${number}`} text={number.toString()} buttonFunc={() => addToOperation(number.toString())} />
-    )
-  })
+    );
+  });
 
   const operationButton = operations.map((operation) => {
     return (
       <Button key={`opbtn-${operation}`} text={operation} buttonFunc={() => addToOperation(operation)} />
-    )
-  })
+    );
+  });
 
   return (
     <>
@@ -59,10 +67,11 @@ function App() {
         <Button key="equalsbtn" text="=" buttonFunc={() => convertOperation(formula)} />
         {operationButton}
         <Button key="clearbtn" text="C" buttonFunc={clearFormula} />
-          {error && <p>{error}</p>}
+        {error && <p>{error}</p>}
       </div>
     </>
-  )
+  );
 }
 
-export default App
+
+export default App;
