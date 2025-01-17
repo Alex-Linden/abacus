@@ -5,14 +5,16 @@ import { Display } from './Display'
 import { Button } from './Button'
 import './App.css'
 
+const operations = ['+', '-', '*', '/']
+
 function App() {
   const [formula, setFormula] = useState('1+1')
   const [error, setError] = useState('')
 
-  function convertOperation(operation: string): string {
+  function convertOperation(operation: string): void {
     try {
       // Use `Function` to safely evaluate the input.
-      const result = new Function(`return ${input}`)();
+      const result = new Function(`return ${operation}`)();
 
       // Ensure the result is a finite number
       if (typeof result !== "number" || !isFinite(result)) {
@@ -25,8 +27,13 @@ function App() {
     }
   }
 
-  const handleClick = (value : string) => {
-    let newValue = formula + value
+  function clearFormula(): void {
+    setFormula('')
+    setError('')
+  }
+
+  const addToOperation = (value : string) => {
+    const newValue = formula + value
     setFormula(newValue)
 
   }
@@ -34,7 +41,13 @@ function App() {
   const numberButton = Array.from(Array(9)).map((_, index) => {
     const number = index + 1
     return (
-      <Button text={number.toString()} buttonFunc={handleClick} />
+      <Button key={`numbtn-${number}`} text={number.toString()} buttonFunc={() => addToOperation(number.toString())} />
+    )
+  })
+
+  const operationButton = operations.map((operation) => {
+    return (
+      <Button key={`opbtn-${operation}`} text={operation} buttonFunc={() => addToOperation(operation)} />
     )
   })
 
@@ -43,6 +56,10 @@ function App() {
       <div className="app">
         <Display operation={formula} />
         {numberButton}
+        <Button key="equalsbtn" text="=" buttonFunc={() => convertOperation(formula)} />
+        {operationButton}
+        <Button key="clearbtn" text="C" buttonFunc={clearFormula} />
+          {error && <p>{error}</p>}
       </div>
     </>
   )

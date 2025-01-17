@@ -1,11 +1,11 @@
 import React from 'react'
 
-export const Button = ({ text, buttonFunc }: { text: string, buttonFunc: (value: string) => void }) => {
-    const handleClick = () => {
-        buttonFunc(text)
-    }
+export const Button = ({ text, buttonFunc }: { text: string, buttonFunc: Function }) => {
+    // const handleClick = () => {
+    //     buttonFunc(text)
+    // }
   return (
-    <button className="button" onClick={handleClick}>
+    <button className="button" onClick={() => buttonFunc()}>
       {text}
     </button>
   )
